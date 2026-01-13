@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="fi">
+<head>
+  <meta charset="UTF-8">
+  <title>Synttäripeli</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<!-- ALOITUSRUUTU -->
+<div id="startScreen">
+  <h1>Synttäripeli</h1>
+  <p>Käännä puhelin vaakatasoon</p>
+  <button id="startBtn">Aloita</button>
+</div>
+
+<!-- PELI -->
+<div id="game" class="hidden">
+  <div id="world">
+    <div id="bg-far" class="bg"></div>
+    <div id="bg-mid" class="bg"></div>
+    <div id="bg-front" class="bg"></div>
+
+    <img id="character" src="images/character/idle_right.png">
+    <div id="cars"></div>
+  </div>
+</div>
+
+<!-- OHJAUS -->
+<div id="controls" class="hidden">
+  <button id="leftBtn">⬅</button>
+  <button id="rightBtn">➡</button>
+</div>
+
+<!-- BAARI -->
+<div id="bar" class="hidden">
+  <img id="barImage">
+  <p id="barText"></p>
+  <input id="orderInput" class="hidden" placeholder="Kirjoita tilaus">
+</div>
+
+<!-- ÄÄNET -->
+<audio id="clock" src="audio/clock.mp3"></audio>
+<audio id="music" src="audio/music.mp3" loop></audio>
+
+<script src="game.js"></script>
+</body>
+</html>

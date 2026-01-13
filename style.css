@@ -1,0 +1,143 @@
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  background: black;
+  color: white;
+  font-family: sans-serif;
+  overflow: hidden;
+}
+
+/* YLEINEN PIILOTUS */
+.hidden {
+  display: none !important;
+}
+
+/* =====================
+   ALOITUSRUUTU
+===================== */
+#startScreen {
+  position: fixed;
+  inset: 0;
+  background: #000;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+#startScreen button {
+  margin-top: 20px;
+  font-size: 20px;
+}
+
+/* =====================
+   PELIALUE
+===================== */
+#game {
+  width: 100vw;
+  height: 100vh;
+}
+
+#world {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
+
+/* =====================
+   PARALLAX-KERROKSET
+===================== */
+.bg {
+  position: absolute;
+  inset: 0;
+  width: 200%;
+  height: 100%;
+  background-repeat: repeat-x;
+  background-size: auto 100%;
+}
+
+/* kaukaisin */
+#bg-far {
+  z-index: 1;
+  background-image: url("images/background/far.png");
+}
+
+/* keskikerros */
+#bg-mid {
+  z-index: 2;
+  background-image: url("images/background/mid.png");
+}
+
+/* etuala */
+#bg-front {
+  z-index: 3;
+  background-image: url("images/background/front.png");
+}
+
+/* =====================
+   HAHMO
+===================== */
+#character {
+  position: absolute;
+  bottom: 10%;
+  left: 45%;
+  height: 40%;
+  z-index: 10;
+  image-rendering: pixelated;
+}
+
+/* =====================
+   AUTOT
+===================== */
+.car {
+  position: absolute;
+  bottom: 15%;
+  height: 15%;
+  z-index: 9;
+  image-rendering: pixelated;
+}
+
+/* =====================
+   OHJAUSNAPIT (MOBIILI)
+===================== */
+#controls {
+  position: fixed;
+  bottom: 20px;
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  padding: 0 30px;
+  z-index: 500;
+}
+
+#controls button {
+  font-size: 30px;
+}
+
+/* =====================
+   BAARI
+===================== */
+#bar {
+  position: fixed;
+  inset: 0;
+  background: black;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+#bar img {
+  max-width: 90%;
+}
+
+#orderInput {
+  margin-top: 15px;
+  font-size: 18px;
+}
