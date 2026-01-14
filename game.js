@@ -11,15 +11,15 @@ const controls = document.getElementById("controls");
 const clock = document.getElementById("clock");
 const music = document.getElementById("music");
 
-// MAANRAJAT
+// Kentän rajat
 const WORLD_LEFT = 0;
-const WORLD_RIGHT = 2000;
+const WORLD_RIGHT = 2200; // leveys noin minuutin kävelyyn
 
 let playerX = WORLD_LEFT;
 let movingLeft = false;
 let movingRight = false;
 let walkFrame = 0;
-let facing = "right"; // right / left
+let facing = "right";
 
 // -------- SCALE --------
 function scaleGame() {
@@ -35,9 +35,7 @@ scaleGame();
 // -------- START --------
 startBtn.onclick = () => {
   startScreen.classList.add("hidden");
-
   clock.play().catch(()=>{});
-
   setTimeout(() => {
     music.play().catch(()=>{});
     document.getElementById("game").classList.remove("hidden");
@@ -66,36 +64,35 @@ function update() {
   const speed = 2;
   let walking = false;
 
-  if (movingRight) {
-    playerX += speed;
-    facing = "right";
-    walking = true;
-  }
-  if (movingLeft) {
-    playerX -= speed;
-    facing = "left";
-    walking = true;
-  }
+  if (movingRight) { playerX += speed; facing = "right"; walking = true; }
+  if (movingLeft)  { playerX -= speed; facing = "left";  walking = true; }
 
   // KIINTEÄT RAJAT
   if (playerX < WORLD_LEFT) playerX = WORLD_LEFT;
   if (playerX > WORLD_RIGHT) playerX = WORLD_RIGHT;
 
-  // SIIRRÄ PELAAJA
-  player.style.left = playerX + "px";
+  // Kamera seuraa hahmoa
+  let viewportX = playerX - 568 / 2;
+  if (viewportX < 0) viewportX = 0;
+  if (viewportX > WORLD_RIGHT - 568) viewportX = WORLD_RIGHT - 568;
+  viewport.style.left = -viewportX + "px";
 
-  // PARALLAX
+  // Parallax
   bgFar.style.backgroundPositionX = -playerX * 0.3 + "px";
   bgMid.style.backgroundPositionX = -playerX * 0.6 + "px";
   bgFront.style.backgroundPositionX = -playerX * 1.0 + "px";
 
-  // ANIMAATIO
+  // Kävelyanimaatio idle-välissä
   if (walking) {
     walkFrame++;
-    const frame = walkFrame % 20 < 10 ? "1" : "2";
-    player.src = `images/character/walk_${facing}_${frame}.png`;
+    const frame = Math.floor(walkFrame / 10) % 4;
+    if (frame === 0) player.src = `images/character/walk_${facing}_1.png`;
+    else if (frame === 1) player.src = `images/character/idle_${facing}.png`;
+    else if (frame === 2) player.src = `images/character/walk_${facing}_2.png`;
+    else player.src = `images/character/idle_${facing}.png`;
   } else {
     player.src = `images/character/idle_${facing}.png`;
+    walkFrame = 0;
   }
 
   requestAnimationFrame(update);
