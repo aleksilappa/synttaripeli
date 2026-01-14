@@ -3,6 +3,8 @@ const player = document.getElementById("player");
 const bgFar = document.getElementById("bg-far");
 const bgMid = document.getElementById("bg-mid");
 const bgFront = document.getElementById("bg-front");
+const workDoor = document.getElementById("workDoor");
+const pubDoor = document.getElementById("pubDoor");
 
 const startScreen = document.getElementById("startScreen");
 const startBtn = document.getElementById("startBtn");
@@ -11,8 +13,9 @@ const controls = document.getElementById("controls");
 const clock = document.getElementById("clock");
 const music = document.getElementById("music");
 
+// Kentän rajat
 const WORLD_LEFT = 0;
-const WORLD_RIGHT = 2200;
+const WORLD_RIGHT = 7200; // leveä kenttä ~1 minuutin kävely
 
 let playerX = WORLD_LEFT;
 let movingLeft = false;
@@ -63,33 +66,29 @@ function update() {
   const speed = 2;
   let walking = false;
 
-  // Hahmon liike
+  // Liike vasemmalle oikealle, vasemmalle liikkuminen estetty alkuperäisestä ovesta
   if (movingRight) { playerX += speed; facing = "right"; walking = true; }
-  if (movingLeft)  { playerX -= speed; facing = "left";  walking = true; }
+  if (movingLeft && playerX > WORLD_LEFT) { playerX -= speed; facing = "left"; walking = true; }
 
-  // Maailman rajat
+  // Kentän rajat
   if (playerX < WORLD_LEFT) playerX = WORLD_LEFT;
   if (playerX > WORLD_RIGHT) playerX = WORLD_RIGHT;
 
-  // Kamera seuraa hahmoa
-  let viewportX = playerX - 568 / 2;
-  if (viewportX < 0) viewportX = 0;
-  if (viewportX > WORLD_RIGHT - 568) viewportX = WORLD_RIGHT - 568;
-  viewport.style.left = -viewportX + "px";
+  // Hahmo pysyy aina ruudun keskellä
+  player.style.left = 568/2 - player.width/2 + "px";
 
-  // Hahmo pysyy keskellä
-  const screenCenter = 568 / 2 - player.width / 2;
-  player.style.left = screenCenter + "px";
+  // Parallax ja objektien liike
+  bgFar.style.backgroundPositionX = -playerX*0.3 + "px";
+  bgMid.style.backgroundPositionX = -playerX*0.6 + "px";
+  bgFront.style.backgroundPositionX = -playerX*1.0 + "px";
 
-  // Parallax
-  bgFar.style.backgroundPositionX = -playerX * 0.3 + "px";
-  bgMid.style.backgroundPositionX = -playerX * 0.6 + "px";
-  bgFront.style.backgroundPositionX = -playerX * 1.0 + "px";
+  workDoor.style.left = 200 - playerX + 568/2 + "px";
+  pubDoor.style.left = 6800 - playerX + 568/2 + "px";
 
   // Kävelyanimaatio idle-välissä
   if (walking) {
     walkFrame++;
-    const frame = Math.floor(walkFrame / 10) % 4;
+    const frame = Math.floor(walkFrame/10) % 4;
     if (frame === 0) player.src = `images/character/walk_${facing}_1.png`;
     else if (frame === 1) player.src = `images/character/idle_${facing}.png`;
     else if (frame === 2) player.src = `images/character/walk_${facing}_2.png`;

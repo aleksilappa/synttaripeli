@@ -43,7 +43,7 @@ html, body {
 
 #bg-far, #bg-mid, #bg-front {
   position: absolute;
-  width: 2200px; /* koko kenttä */
+  width: 7200px; /* kenttä ~1 min kävely */
   height: 320px;
 }
 
@@ -54,7 +54,7 @@ html, body {
 #player {
   position: absolute;
   bottom: 0;
-  height: 128px; 
+  height: 128px;
   z-index: 5;
   image-rendering: pixelated;
 }
