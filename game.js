@@ -1,130 +1,100 @@
-console.log("GAME LOADED");
+const viewport = document.getElementById("viewport");
+const player = document.getElementById("player");
+const bgFar = document.getElementById("bg-far");
 
-/* ELEMENTIT */
 const startScreen = document.getElementById("startScreen");
 const startBtn = document.getElementById("startBtn");
-const game = document.getElementById("game");
 const controls = document.getElementById("controls");
-
-const char = document.getElementById("character");
-const carsContainer = document.getElementById("cars");
 
 const clock = document.getElementById("clock");
 const music = document.getElementById("music");
 
-/* TILA */
-let canMove = false;
+const WORLD_LEFT = 0;
+const WORLD_RIGHT = 2000;
+
+let playerX = WORLD_LEFT;
+let movingLeft = false;
+let movingRight = false;
 let walking = false;
-let dir = 1;
-let pos = 0;
+let walkFrame = 0;
 
-let walkIndex = 0;
-let walkFrame = 1;
-const walkSequence = ["walk", "idle", "walk", "idle"];
+// -------- SCALE --------
+function scaleGame() {
+  const scale = Math.min(
+    window.innerWidth / 568,
+    window.innerHeight / 320
+  );
+  viewport.style.transform = `scale(${scale})`;
+}
+window.addEventListener("resize", scaleGame);
+scaleGame();
 
-/* ALOITUS */
+// -------- START --------
 startBtn.onclick = () => {
-  startScreen.style.display = "none";
+  startScreen.classList.add("hidden");
 
-  try { clock.play(); } catch {}
+  clock.play().catch(()=>{});
 
   setTimeout(() => {
-    try { music.play(); } catch {}
-    game.classList.remove("hidden");
+    music.play().catch(()=>{});
+    document.getElementById("game").classList.remove("hidden");
     controls.classList.remove("hidden");
-    canMove = true;
     window.focus();
-    spawnCars();
-  }, 1500);
+  }, 1200);
 };
 
-/* KOSKETUS */
-document.getElementById("leftBtn").ontouchstart = () => move(-1);
-document.getElementById("rightBtn").ontouchstart = () => move(1);
-document.getElementById("leftBtn").ontouchend = stop;
-document.getElementById("rightBtn").ontouchend = stop;
-
-/* NÄPPÄIMISTÖ */
-document.addEventListener("keydown", (e) => {
-  console.log(e.key);
-  if (!canMove) return;
-
-  if (e.key === "ArrowLeft") {
-    e.preventDefault();
-    move(-1);
-  }
-  if (e.key === "ArrowRight") {
-    e.preventDefault();
-    move(1);
-  }
+// -------- INPUT --------
+document.addEventListener("keydown", e => {
+  if (e.key === "ArrowLeft") movingLeft = true;
+  if (e.key === "ArrowRight") movingRight = true;
 });
 
-document.addEventListener("keyup", (e) => {
-  if (e.key === "ArrowLeft" || e.key === "ArrowRight") stop();
+document.addEventListener("keyup", e => {
+  if (e.key === "ArrowLeft") movingLeft = false;
+  if (e.key === "ArrowRight") movingRight = false;
 });
 
-/* LIIKE */
-function move(d) {
-  dir = d;
-  walking = true;
-}
+document.getElementById("leftBtn").ontouchstart = () => movingLeft = true;
+document.getElementById("leftBtn").ontouchend = () => movingLeft = false;
+document.getElementById("rightBtn").ontouchstart = () => movingRight = true;
+document.getElementById("rightBtn").ontouchend = () => movingRight = false;
 
-function stop() {
+// -------- LOOP --------
+function update() {
+  let speed = 2;
   walking = false;
-  walkIndex = 0;
-  char.src = `images/character/idle_${dir > 0 ? "right" : "left"}.png`;
-}
 
-/* KÄVELYANIMAATIO */
-setInterval(() => {
-  if (!walking) return;
-
-  const state = walkSequence[walkIndex];
-
-  if (state === "walk") {
-    char.src = `images/character/walk_${dir > 0 ? "right" : "left"}_${walkFrame}.png`;
-    walkFrame = walkFrame === 1 ? 2 : 1;
-  } else {
-    char.src = `images/character/idle_${dir > 0 ? "right" : "left"}.png`;
+  if (movingRight) {
+    playerX += speed;
+    walking = true;
+  }
+  if (movingLeft) {
+    playerX -= speed;
+    walking = true;
   }
 
-  walkIndex = (walkIndex + 1) % walkSequence.length;
-}, 300);
+  // KIINTEÄT RAJAT
+  if (playerX < WORLD_LEFT) playerX = WORLD_LEFT;
+  if (playerX > WORLD_RIGHT) playerX = WORLD_RIGHT;
 
-/* MAAILMA */
-setInterval(() => {
-  if (!walking) return;
+  player.style.left = playerX + "px";
 
-  pos += dir * 2;
+  // PARALLAX (oikea suunta)
+  bgFar.style.backgroundPositionX = -playerX * 0.3 + "px";
 
-  document.getElementById("bg-far").style.backgroundPositionX = -pos * 0.3 + "px";
-  document.getElementById("bg-mid").style.backgroundPositionX = -pos * 0.6 + "px";
-  document.getElementById("bg-front").style.backgroundPositionX = -pos + "px";
-}, 30);
+  // ANIMAATIO
+  if (walking) {
+    walkFrame++;
+    if (walkFrame % 20 < 10) {
+      player.src = "images/character_walk1.png";
+    } else {
+      player.src = "images/character_walk2.png";
+    }
+  } else {
+    player.src = "images/character_idle.png";
+  }
 
-/* AUTOT */
-function spawnCars() {
-  setInterval(() => {
-    const car = document.createElement("img");
-    car.src = "images/objects/car.png";
-    car.className = "car";
-
-    const fromLeft = Math.random() > 0.5;
-    car.style.left = fromLeft ? "-200px" : "100vw";
-    car.style.transform = fromLeft ? "scaleX(1)" : "scaleX(-1)";
-    const speed = fromLeft ? 4 : -4;
-
-    carsContainer.appendChild(car);
-    let x = fromLeft ? -200 : window.innerWidth;
-
-    const loop = setInterval(() => {
-      x += speed;
-      car.style.left = x + "px";
-
-      if (x < -300 || x > window.innerWidth + 300) {
-        clearInterval(loop);
-        car.remove();
-      }
-    }, 30);
-  }, 20000);
+  requestAnimationFrame(update);
 }
+
+update();
