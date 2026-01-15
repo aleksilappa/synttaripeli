@@ -23,6 +23,20 @@ const orderInput = document.getElementById("orderInput");
 const submitOrder = document.getElementById("submitOrder");
 const barResponse = document.getElementById("barResponse");
 
+const fadeOverlay = document.getElementById("fadeOverlay");
+
+function fadeOut(callback) {
+  fadeOverlay.classList.add("active");
+  setTimeout(() => {
+    if (callback) callback();
+  }, 800);
+}
+
+function fadeIn() {
+  fadeOverlay.classList.remove("active");
+}
+
+
 /* Katso pöytään */
 const lookAtTableBtn = document.createElement("button");
 lookAtTableBtn.textContent = "Katso pöytään";

@@ -215,4 +215,20 @@ button:active {
   z-index: 15;
   pointer-events: none;
 }
+/* FADE OVERLAY */
+#fadeOverlay {
+  position: fixed;
+  inset: 0;
+  background: black;
+  opacity: 0;
+  z-index: 50;
+  pointer-events: none;
+  transition: opacity 0.8s ease;
+}
+
+#fadeOverlay.active {
+  opacity: 1;
+}
+
+
 
