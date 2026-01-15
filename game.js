@@ -49,11 +49,32 @@ const CAR_LEFT_LIMIT = -200;
 
 /* SCALE */
 function scaleGame() {
-  const scale = Math.min(window.innerWidth / VIEWPORT_WIDTH, window.innerHeight / 320);
+  const scale = Math.min(
+    window.innerWidth / VIEWPORT_WIDTH,
+    window.innerHeight / 320
+  );
   viewport.style.transform = `scale(${scale})`;
 }
 window.addEventListener("resize", scaleGame);
 scaleGame();
+
+/* ===============================
+   KIRJOITUSEFEKTI + VÄRIT
+================================ */
+let typingTimer = null;
+
+function typeText(text, color) {
+  clearInterval(typingTimer);
+  barResponse.textContent = "";
+  barResponse.style.color = color;
+
+  let i = 0;
+  typingTimer = setInterval(() => {
+    barResponse.textContent += text[i];
+    i++;
+    if (i >= text.length) clearInterval(typingTimer);
+  }, 35);
+}
 
 /* START */
 startBtn.onclick = () => {
@@ -91,11 +112,13 @@ function enterPub() {
 
   barImg.src = "images/bar/bar1.png";
 
-  barResponse.textContent =
-    "Hei, me ollaan täällä! Käy vain tiskillä eka!";
-
-  barUI.classList.add("hidden");
   goToCounter.classList.remove("hidden");
+  barUI.classList.add("hidden");
+
+  typeText(
+    "Hei, me ollaan täällä! Käy vain ensin tiskillä!",
+    "#3cff3c"
+  );
 
   gameStarted = false;
 }
@@ -107,20 +130,23 @@ goToCounter.onclick = () => {
   goToCounter.classList.add("hidden");
   barUI.classList.remove("hidden");
 
-  barResponse.textContent = "Mitä saisi olla?";
+  typeText("Mitä saisi olla?", "#ffd700"); // keltainen
 };
 
 /* KATSO PÖYTÄÄ */
 lookAtTableBtn.onclick = () => {
   barImg.src = "images/bar/bar1.png";
+
   barUI.classList.add("hidden");
   goToCounter.classList.remove("hidden");
 
-  barResponse.textContent =
-    "Hei, me ollaan täällä! Käy vain tiskillä eka!";
+  typeText(
+    "Hei, me ollaan täällä! Käy vain tiskillä eka!",
+    "#3cff3c"
+  );
 };
 
-/* TILAUSLOGIIKKA – KORJATTU */
+/* TILAUSLOGIIKKA */
 submitOrder.onclick = () => {
   const t = orderInput.value.toLowerCase();
 
@@ -131,15 +157,13 @@ submitOrder.onclick = () => {
     t.includes("4chiefs lager");
 
   if (!has6 && !hasBeer) {
-    barResponse.textContent =
-      "Eihän sellaista kukaan juo!";
+    typeText("Eihän sellaista kukaan juo!", "#ffd700");
   }
   else if (!has6 || !hasBeer) {
-    barResponse.textContent =
-      "Joo, melkein, mutta joku tässä vielä mättää.";
+    typeText("Joo, melkein, mutta joku tässä vielä mättää.", "#ffd700");
   }
   else {
-    barResponse.textContent = "Selvä! Tuon juomat pöytään.";
+    typeText("Selvä! Tuon juomat pöytään.", "#ffd700");
     setTimeout(() => {
       barUI.classList.add("hidden");
       barImg.src = "images/bar/bar3.png";
@@ -165,7 +189,8 @@ function update() {
     }
   }
 
-  player.style.left = VIEWPORT_WIDTH / 2 - player.width / 2 + "px";
+  player.style.left =
+    VIEWPORT_WIDTH / 2 - player.width / 2 + "px";
 
   bgFar.style.backgroundPositionX = -playerX * 0.3 + "px";
   bgMid.style.backgroundPositionX = -playerX * 0.6 + "px";
@@ -173,7 +198,8 @@ function update() {
   doorsLayer.style.left = -playerX + "px";
 
   if (carObj.x > CAR_LEFT_LIMIT) carObj.x -= carObj.speed;
-  car.style.left = carObj.x - playerX + VIEWPORT_WIDTH / 2 + "px";
+  car.style.left =
+    carObj.x - playerX + VIEWPORT_WIDTH / 2 + "px";
 
   if (walking) {
     walkFrame++;
