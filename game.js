@@ -42,6 +42,7 @@ let walkFrame = 0;
 let facing = "right";
 let gameStarted = false;
 let enteringPub = false;
+let friendsHaveShouted = false;
 
 /* AUTO */
 let carObj = { x: WORLD_RIGHT, speed: 2 };
@@ -49,10 +50,7 @@ const CAR_LEFT_LIMIT = -200;
 
 /* SCALE */
 function scaleGame() {
-  const scale = Math.min(
-    window.innerWidth / VIEWPORT_WIDTH,
-    window.innerHeight / 320
-  );
+  const scale = Math.min(window.innerWidth / VIEWPORT_WIDTH, window.innerHeight / 320);
   viewport.style.transform = `scale(${scale})`;
 }
 window.addEventListener("resize", scaleGame);
@@ -80,9 +78,9 @@ function typeText(text, color) {
 startBtn.onclick = () => {
   startScreen.classList.add("hidden");
   document.getElementById("game").classList.remove("hidden");
-  clock.play().catch(()=>{});
+  clock.play().catch(() => {});
   clock.onended = () => {
-    music.play().catch(()=>{});
+    music.play().catch(() => {});
     controls.classList.remove("hidden");
     gameStarted = true;
   };
@@ -115,10 +113,13 @@ function enterPub() {
   goToCounter.classList.remove("hidden");
   barUI.classList.add("hidden");
 
-  typeText(
-    "Hei, me ollaan täällä! Käy vain ensin tiskillä!",
-    "#3cff3c"
-  );
+  // Kaverit huutavat vain kerran
+  if (!friendsHaveShouted) {
+    typeText("Hei, me ollaan täällä! Käy vain ensin tiskillä!", "#3cff3c");
+    friendsHaveShouted = true;
+  } else {
+    barResponse.textContent = "";
+  }
 
   gameStarted = false;
 }
@@ -129,6 +130,8 @@ goToCounter.onclick = () => {
 
   goToCounter.classList.add("hidden");
   barUI.classList.remove("hidden");
+  submitOrder.style.display = "inline-block"; // näytä tilausnappi
+  lookAtTableBtn.style.display = "inline-block"; // näytä katso pöytään -nappi
 
   typeText("Mitä saisi olla?", "#ffd700"); // keltainen
 };
@@ -140,10 +143,8 @@ lookAtTableBtn.onclick = () => {
   barUI.classList.add("hidden");
   goToCounter.classList.remove("hidden");
 
-  typeText(
-    "Hei, me ollaan täällä! Käy vain tiskillä eka!",
-    "#3cff3c"
-  );
+  // ei huutoa uudestaan
+  barResponse.textContent = "";
 };
 
 /* TILAUSLOGIIKKA */
@@ -158,12 +159,15 @@ submitOrder.onclick = () => {
 
   if (!has6 && !hasBeer) {
     typeText("Eihän sellaista kukaan juo!", "#ffd700");
-  }
-  else if (!has6 || !hasBeer) {
+  } else if (!has6 || !hasBeer) {
     typeText("Joo, melkein, mutta joku tässä vielä mättää.", "#ffd700");
-  }
-  else {
+  } else {
     typeText("Selvä! Tuon juomat pöytään.", "#ffd700");
+
+    // Piilota tilausnappi ja näytä katso pöytään
+    submitOrder.style.display = "none";
+    lookAtTableBtn.style.display = "inline-block";
+
     setTimeout(() => {
       barUI.classList.add("hidden");
       barImg.src = "images/bar/bar3.png";
@@ -172,7 +176,7 @@ submitOrder.onclick = () => {
   }
 };
 
-/* UPDATE */
+/* UPDATE LOOP */
 function update() {
   const speed = 2;
   let walking = false;
@@ -189,8 +193,7 @@ function update() {
     }
   }
 
-  player.style.left =
-    VIEWPORT_WIDTH / 2 - player.width / 2 + "px";
+  player.style.left = VIEWPORT_WIDTH / 2 - player.width / 2 + "px";
 
   bgFar.style.backgroundPositionX = -playerX * 0.3 + "px";
   bgMid.style.backgroundPositionX = -playerX * 0.6 + "px";
@@ -198,8 +201,7 @@ function update() {
   doorsLayer.style.left = -playerX + "px";
 
   if (carObj.x > CAR_LEFT_LIMIT) carObj.x -= carObj.speed;
-  car.style.left =
-    carObj.x - playerX + VIEWPORT_WIDTH / 2 + "px";
+  car.style.left = carObj.x - playerX + VIEWPORT_WIDTH / 2 + "px";
 
   if (walking) {
     walkFrame++;
