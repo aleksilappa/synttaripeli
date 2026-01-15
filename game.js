@@ -25,17 +25,20 @@ const barResponse = document.getElementById("barResponse");
 
 const fadeOverlay = document.getElementById("fadeOverlay");
 
+/* ==================================
+   FADE FUNKTIOT
+================================== */
 function fadeOut(callback) {
   fadeOverlay.classList.add("active");
   setTimeout(() => {
     if (callback) callback();
-  }, 800);
+  }, 1000); // 1s fade
 }
 
-function fadeIn() {
+function fadeIn(callback) {
   fadeOverlay.classList.remove("active");
+  if (callback) callback();
 }
-
 
 /* Katso pöytään */
 const lookAtTableBtn = document.createElement("button");
@@ -122,43 +125,49 @@ function enterPub() {
   controls.classList.add("hidden");
   barScreen.classList.remove("hidden");
 
-  barImg.src = "images/bar/bar1.png";
+  fadeOut(() => {
+    barImg.src = "images/bar/bar1.png";
+    goToCounter.classList.remove("hidden");
+    barUI.classList.add("hidden");
 
-  goToCounter.classList.remove("hidden");
-  barUI.classList.add("hidden");
+    if (!friendsHaveShouted) {
+      typeText("Hei, me ollaan täällä! Käy vain ensin tiskillä!", "#3cff3c");
+      friendsHaveShouted = true;
+    }
 
-  // Kaverit huutavat vain kerran
-  if (!friendsHaveShouted) {
-    typeText("Hei, me ollaan täällä! Käy vain ensin tiskillä!", "#3cff3c");
-    friendsHaveShouted = true;
-  } else {
-    barResponse.textContent = "";
-  }
+    fadeIn();
+  });
 
   gameStarted = false;
 }
 
 /* BAR1 → BAR2 */
 goToCounter.onclick = () => {
-  barImg.src = "images/bar/bar2.png";
+  fadeOut(() => {
+    barImg.src = "images/bar/bar2.png";
 
-  goToCounter.classList.add("hidden");
-  barUI.classList.remove("hidden");
-  submitOrder.style.display = "inline-block"; // näytä tilausnappi
-  lookAtTableBtn.style.display = "inline-block"; // näytä katso pöytään -nappi
+    goToCounter.classList.add("hidden");
+    barUI.classList.remove("hidden");
+    submitOrder.style.display = "inline-block";
+    lookAtTableBtn.style.display = "inline-block";
 
-  typeText("Mitä saisi olla?", "#ffd700"); // keltainen
+    fadeIn(() => {
+      typeText("Mitä saisi olla?", "#ffd700");
+    });
+  });
 };
 
 /* KATSO PÖYTÄÄ */
 lookAtTableBtn.onclick = () => {
-  barImg.src = "images/bar/bar1.png";
+  fadeOut(() => {
+    barImg.src = "images/bar/bar1.png";
+    barUI.classList.add("hidden");
+    goToCounter.classList.remove("hidden");
 
-  barUI.classList.add("hidden");
-  goToCounter.classList.remove("hidden");
-
-  // ei huutoa uudestaan
-  barResponse.textContent = "";
+    fadeIn(() => {
+      barResponse.textContent = "";
+    });
+  });
 };
 
 /* TILAUSLOGIIKKA */
@@ -173,29 +182,23 @@ submitOrder.onclick = () => {
 
   if (!has6 && !hasBeer) {
     typeText("Eihän sellaista kukaan juo!", "#ffd700");
-  }
-  else if (!has6 || !hasBeer) {
+  } else if (!has6 || !hasBeer) {
     typeText("Joo, melkein, mutta joku tässä vielä mättää.", "#ffd700");
-  }
-  else {
-    typeText("Selvä! Tuon juomat pöytään.", "#ffd700");
-
-    // Piilota KAIKKI napit heti oikean vastauksen jälkeen
-    submitOrder.classList.add("hidden");
-    lookAtTableBtn.classList.add("hidden");
-
-    setTimeout(() => {
+  } else {
+    fadeOut(() => {
       barUI.classList.add("hidden");
+      submitOrder.classList.add("hidden");
+      lookAtTableBtn.classList.add("hidden");
+
       barImg.src = "images/bar/bar3.png";
 
-      // Poista baarimikon viimeinen puhe
-      barResponse.textContent = "";
-
-      music.loop = false;
-    }, 4000);
+      fadeIn(() => {
+        barResponse.textContent = "";
+        music.loop = false;
+      });
+    });
   }
 };
-
 
 /* UPDATE LOOP */
 function update() {
