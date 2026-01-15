@@ -201,7 +201,7 @@ button:active {
 ========================= */
 #barResponse {
   position: absolute;
-  bottom: 220px;
+  bottom: 300px;
   left: 50%;
   transform: translateX(-50%);
 
