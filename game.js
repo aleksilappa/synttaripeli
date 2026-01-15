@@ -159,22 +159,29 @@ submitOrder.onclick = () => {
 
   if (!has6 && !hasBeer) {
     typeText("Eihän sellaista kukaan juo!", "#ffd700");
-  } else if (!has6 || !hasBeer) {
+  }
+  else if (!has6 || !hasBeer) {
     typeText("Joo, melkein, mutta joku tässä vielä mättää.", "#ffd700");
-  } else {
+  }
+  else {
     typeText("Selvä! Tuon juomat pöytään.", "#ffd700");
 
-    // Piilota tilausnappi ja näytä katso pöytään
-    submitOrder.style.display = "none";
-    lookAtTableBtn.style.display = "inline-block";
+    // Piilota KAIKKI napit heti oikean vastauksen jälkeen
+    submitOrder.classList.add("hidden");
+    lookAtTableBtn.classList.add("hidden");
 
     setTimeout(() => {
       barUI.classList.add("hidden");
       barImg.src = "images/bar/bar3.png";
+
+      // Poista baarimikon viimeinen puhe
+      barResponse.textContent = "";
+
       music.loop = false;
     }, 4000);
   }
 };
+
 
 /* UPDATE LOOP */
 function update() {

@@ -150,4 +150,18 @@ html, body {
   z-index: 15;
   pointer-events: none;
 }
+#barUI p {
+  font-family: 'Press Start 2P', monospace;
+  font-size: 14px; /* pienempi fontti, pixel-tyyli */
+  text-align: center;
+  color: white;
+}
+#barResponse {
+  font-family: 'Press Start 2P', monospace;
+  font-size: 14px;
+  line-height: 1.6;
+  text-align: center;
+  color: white;
+  max-width: 90vw;
+}
 
