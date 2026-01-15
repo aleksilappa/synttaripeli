@@ -15,6 +15,8 @@ const rightBtn = document.getElementById("rightBtn");
 const clock = document.getElementById("clock");
 const music = document.getElementById("music");
 const correctSound = document.getElementById("correctSound");
+const doorSound = document.getElementById("doorSound");
+const typingSound = document.getElementById("typingSound");
 
 const barScreen = document.getElementById("barScreen");
 const barImg = document.getElementById("barImg");
@@ -78,17 +80,23 @@ scaleGame();
    KIRJOITUSEFEKTI + VÄRIT
 ================================ */
 let typingTimer = null;
-
 function typeText(text, color) {
   clearInterval(typingTimer);
   barResponse.textContent = "";
   barResponse.style.color = color;
 
+  typingSound.currentTime = 0;
+  typingSound.play().catch(() => {});
+
   let i = 0;
   typingTimer = setInterval(() => {
     barResponse.textContent += text[i];
     i++;
-    if (i >= text.length) clearInterval(typingTimer);
+    if (i >= text.length) {
+      clearInterval(typingTimer);
+      typingSound.pause();
+      typingSound.currentTime = 0;
+    }
   }, 35);
 }
 
@@ -122,11 +130,14 @@ rightBtn.ontouchend = () => movingRight = false;
 
 /* PUB */
 function enterPub() {
-  document.getElementById("game").classList.add("hidden");
-  controls.classList.add("hidden");
-  barScreen.classList.remove("hidden");
+  doorSound.currentTime = 0;
+  doorSound.play().catch(() => {});
 
   fadeOut(() => {
+    document.getElementById("game").classList.add("hidden");
+    controls.classList.add("hidden");
+    barScreen.classList.remove("hidden");
+
     barImg.src = "images/bar/bar1.png";
     goToCounter.classList.remove("hidden");
     barUI.classList.add("hidden");
@@ -134,6 +145,8 @@ function enterPub() {
     if (!friendsHaveShouted) {
       typeText("Hei, me ollaan täällä! Käy vain ensin tiskillä!", "#3cff3c");
       friendsHaveShouted = true;
+    } else {
+      barResponse.textContent = "";
     }
 
     fadeIn();
@@ -174,12 +187,9 @@ lookAtTableBtn.onclick = () => {
 /* TILAUSLOGIIKKA */
 submitOrder.onclick = () => {
   const t = orderInput.value.toLowerCase();
-
   const has6 = t.includes("6") || t.includes("kuusi");
   const hasBeer =
-    t.includes("4chiefs-lager") ||
-    t.includes("4chiefslager") ||
-    t.includes("4chiefs");
+    t.includes("4chiefs-lager") || t.includes("4chiefslager") || t.includes("4chiefs");
 
   if (!has6 && !hasBeer) {
     typeText("Eihän sellaista kukaan juo!", "#ffd700");
@@ -194,19 +204,13 @@ submitOrder.onclick = () => {
   /* =========================
      OIKEA VASTAUS
   ========================= */
-
-  // Soita ääni
   correctSound.currentTime = 0;
   correctSound.play().catch(() => {});
-
-  // Näytä viimeinen repliikki
   typeText("Selvä! Tuon juomat pöytään.", "#ffd700");
 
-  // Piilota napit heti (ettei voi enää painaa)
   submitOrder.classList.add("hidden");
   lookAtTableBtn.classList.add("hidden");
 
-  // ODOTA 4 SEKUNTIA, SITTEN FADE + BAR3
   setTimeout(() => {
     fadeOut(() => {
       barUI.classList.add("hidden");
@@ -217,7 +221,6 @@ submitOrder.onclick = () => {
     });
   }, 4000);
 };
-
 
 /* UPDATE LOOP */
 function update() {
@@ -237,7 +240,6 @@ function update() {
   }
 
   player.style.left = VIEWPORT_WIDTH / 2 - player.width / 2 + "px";
-
   bgFar.style.backgroundPositionX = -playerX * 0.3 + "px";
   bgMid.style.backgroundPositionX = -playerX * 0.6 + "px";
   bgFront.style.backgroundPositionX = -playerX + "px";

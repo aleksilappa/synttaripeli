@@ -9,11 +9,17 @@ html, body {
   overflow: hidden;
   background: black;
   color: white;
+
+  font-family: 'Press Start 2P', monospace;
+
   user-select: none;
   -webkit-user-select: none;
   -webkit-touch-callout: none;
   touch-action: none;
-  font-family: 'Press Start 2P', monospace;
+}
+
+.hidden {
+  display: none !important;
 }
 
 /* ==================================
@@ -34,13 +40,6 @@ html, body {
 }
 
 /* ==================================
-   HIDDEN
-================================== */
-.hidden {
-  display: none !important;
-}
-
-/* ==================================
    START SCREEN
 ================================== */
 #startScreen {
@@ -48,18 +47,25 @@ html, body {
   inset: 0;
   background: black;
   color: white;
+
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
+
   z-index: 10;
   text-align: center;
 }
 
+#startScreen img {
+  max-width: 300px;
+  height: auto;
+  margin-bottom: 20px;
+}
+
 #startScreen p {
-  margin: 10px 0;
+  margin: 12px 0;
   font-size: 14px;
-  text-align: center;
   line-height: 1.4;
 }
 
@@ -111,7 +117,28 @@ html, body {
 }
 
 /* ==================================
-   OHJAIMET
+   RETRO BUTTONS (GLOBAL)
+================================== */
+button {
+  font-family: 'Press Start 2P', monospace;
+  font-size: 14px;
+  color: white;
+  background: black;
+  border: 2px solid white;
+  padding: 14px 18px;
+  min-width: 180px;
+  min-height: 48px;
+  text-align: center;
+  cursor: pointer;
+}
+
+button:active {
+  background: white;
+  color: black;
+}
+
+/* ==================================
+   OHJAIMET (LEFT / RIGHT)
 ================================== */
 #controls {
   position: fixed;
@@ -124,9 +151,9 @@ html, body {
 }
 
 #controls button {
-  font-size: 32px;
-  padding: 10px 20px;
-  font-family: 'Press Start 2P', monospace;
+  font-size: 24px;
+  min-width: 120px;
+  min-height: 56px;
 }
 
 /* ==================================
@@ -137,61 +164,70 @@ html, body {
   inset: 0;
   background: black;
   display: flex;
-  justify-content: flex-start; /* ylälaidassa */
-  align-items: flex-start;
+  justify-content: center;
+  align-items: flex-start; /* kuva ylös */
   flex-direction: column;
   z-index: 50;
 }
 
 #barImg {
   width: 100vw;
-  height: auto; /* säilyttää kuvasuhteen */
+  height: 100vh;
   object-fit: contain;
-  display: block;
+  object-position: top center; /* tärkeä, että kuva pysyy ylhäällä */
 }
 
-/* UI NAPIT JA INPUTIT */
+/* ==================================
+   BAR UI
+================================== */
 #barUI {
   position: absolute;
-  bottom: 20px; /* alhaalla, napit */
+  bottom: 80px;
   left: 50%;
   transform: translateX(-50%);
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 10px;
-  z-index: 15;
+  gap: 12px;
+  z-index: 10;
 }
 
-#barUI input, #barUI button {
-  font-size: 16px;
-  padding: 6px 12px;
+#barUI input {
   font-family: 'Press Start 2P', monospace;
+  font-size: 12px;
+  padding: 10px;
+  width: 240px;
+  background: black;
+  color: white;
+  border: 2px solid white;
 }
 
-#goToCounter, #lookAtTable {
+/* ==================================
+   BAR BUTTONS
+================================== */
+#goToCounter,
+#lookAtTable {
   position: absolute;
-  bottom: 20px;
+  bottom: 80px;
   left: 50%;
   transform: translateX(-50%);
-  font-size: 16px;
-  padding: 8px 16px;
-  z-index: 15;
-  font-family: 'Press Start 2P', monospace;
+  z-index: 10;
 }
 
-/* PUHETEKSTIT */
+/* ==================================
+   DIALOG / TEXT
+================================== */
 #barResponse {
   position: absolute;
-  top: 320px; /* juuri bar-kuvan alle */
+  bottom: 320px;
   left: 50%;
   transform: translateX(-50%);
-  max-width: 90%;
-  text-align: center;
-  font-size: 14px;
-  line-height: 1.4;
-  z-index: 20;
-  pointer-events: none;
+  max-width: 90vw;
   font-family: 'Press Start 2P', monospace;
+  font-size: 12px;
+  line-height: 1.6;
+  text-align: center;
+  z-index: 15;
+  pointer-events: none;
   color: white;
 }
